@@ -9,7 +9,6 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import errorhandling.MissingInput;
-import errorhandling.NotFoundException;
 import security.errorhandling.AuthenticationException;
 import java.util.ArrayList;
 import java.util.List;

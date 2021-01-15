@@ -6,7 +6,6 @@ import dto.UserDTO;
 import entities.Role;
 import entities.User;
 import errorhandling.MissingInput;
-import errorhandling.NotFoundException;
 import security.errorhandling.AuthenticationException;
 import utils.EMF_Creator;
 
@@ -24,7 +23,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Locale;
 
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
