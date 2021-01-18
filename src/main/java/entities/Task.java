@@ -18,6 +18,15 @@ public class Task implements Serializable {
 
     private String dueDate;
 
+    @ManyToOne
+    private Opportunity opportunity;
+
+    @ManyToOne
+    private TaskStatus taskStatus;
+
+    @ManyToOne
+    private TaskType taskType;
+
     public Task() {
     }
 

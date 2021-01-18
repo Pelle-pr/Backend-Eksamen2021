@@ -1,6 +1,7 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.*;
 
 @Entity
@@ -21,6 +22,9 @@ public class Opportunity implements Serializable {
 
     @ManyToOne
     private OpportunityStatus opportunityStatus;
+
+    @OneToMany(mappedBy = "opportunity")
+    private List<Task> taskList;
 
     public Opportunity() {
     }
