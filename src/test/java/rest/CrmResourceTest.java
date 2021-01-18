@@ -149,4 +149,18 @@ public class CrmResourceTest {
                 .body("message", equalTo("Please enter at least 2 characters in name"));
 
     }
+
+    @Test
+    public void testGetAllContacts(){
+
+        given()
+                .contentType("application/json")
+                .get("/crm").then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("name", hasItem("Pelle"))
+                .and()
+                .body("name", hasItem("Mari"));
+    }
+
 }

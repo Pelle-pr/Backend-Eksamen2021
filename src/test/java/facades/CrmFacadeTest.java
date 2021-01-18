@@ -95,6 +95,14 @@ public class CrmFacadeTest {
 
     }
 
+    @Test
+    public void getAllContactsTest (){
+
+        List<ContactDTO> contactDTOList = facade.getAllContacts();
+
+        assertTrue(contactDTOList.size() == 2);
+    }
+
 
 
 }

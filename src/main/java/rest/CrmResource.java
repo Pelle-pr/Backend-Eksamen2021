@@ -43,4 +43,13 @@ public class CrmResource {
         return GSON.toJson(addedContactDTO);
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getAllContacts (){
+
+        List<ContactDTO> contactDTOList = CRM_FACADE.getAllContacts();
+
+        return GSON.toJson(contactDTOList);
+    }
+
 }
