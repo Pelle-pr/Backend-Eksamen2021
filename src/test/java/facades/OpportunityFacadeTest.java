@@ -61,6 +61,14 @@ public class OpportunityFacadeTest {
         s3 = new OpportunityStatus("Won");
         s4 = new OpportunityStatus("Lost");
 
+        c1.addOpportunity(o1);
+        c1.addOpportunity(o2);
+
+        s1.AddOpportunity(o1);
+        s1.AddOpportunity(o2);
+
+
+
         try {
             em.getTransaction().begin();
             em.createNamedQuery("Opportunity.deleteAllRows").executeUpdate();
@@ -68,12 +76,12 @@ public class OpportunityFacadeTest {
             em.createNamedQuery("Contact.deleteAllRows").executeUpdate();
             em.persist(c1);
             em.persist(c2);
+            em.persist(o1);
+            em.persist(o2);
             em.persist(s1);
             em.persist(s2);
             em.persist(s3);
             em.persist(s4);
-            em.persist(o1);
-            em.persist(o2);
             em.getTransaction().commit();
 
         } finally {
@@ -89,12 +97,22 @@ public class OpportunityFacadeTest {
 
     @Test
     public void testAddOpp() {
+
         o3 = new Opportunity("Test", 5000, "2021-03-04");
+        o3.setOpportunityStatus(s1);
+
         OpportunityDTO opportunityDTOtoAdd = new OpportunityDTO(o3);
 
         OpportunityDTO opportunityDTO = facade.addOpportunity(c1.getId(), opportunityDTOtoAdd);
-
         assertTrue(opportunityDTO.getName().equals("Test"));
+    }
+
+    @Test
+    public void testGetAllOppsByID() {
+
+        List<OpportunityDTO> opportunityDTOList = facade.getAllOppById(c1.getId());
+
+        assertTrue(opportunityDTOList.size() == 2);
     }
 
 

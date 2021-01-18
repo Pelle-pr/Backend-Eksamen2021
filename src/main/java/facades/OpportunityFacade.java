@@ -55,4 +55,21 @@ public class OpportunityFacade {
 
     }
 
+    public List<OpportunityDTO> getAllOppById (int id) {
+
+        EntityManager em = emf.createEntityManager();
+
+        TypedQuery<Opportunity> query = em.createQuery("SELECT o from Opportunity o join o.contact c where c.id = :id", Opportunity.class);
+        query.setParameter("id", id);
+
+        List<Opportunity> opportunityList = query.getResultList();
+        List<OpportunityDTO> opportunityDTOList = new ArrayList<>();
+
+        for(Opportunity o : opportunityList){
+            opportunityDTOList.add(new OpportunityDTO(o));
+        }
+
+        return opportunityDTOList;
+    }
+
 }

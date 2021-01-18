@@ -36,6 +36,17 @@ public class OpportunityResource {
         return GSON.toJson(addedOpportunityDTO);
     }
 
+    @GET
+    @Path("{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+
+    public String getOpps(@PathParam("id") int id){
+
+        List<OpportunityDTO> opportunityDTOList = OPPORTUNITY_FACADE.getAllOppById(id);
+
+        return GSON.toJson(opportunityDTOList);
+    }
+
 
 
 

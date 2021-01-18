@@ -28,7 +28,7 @@ public class Opportunity implements Serializable {
     public Opportunity(String name, int amount, String closeDate) {
         this.name = name;
         this.amount = amount;
-        CloseDate = closeDate;
+        this.CloseDate = closeDate;
     }
 
     public OpportunityStatus getOpportunityStatus() {

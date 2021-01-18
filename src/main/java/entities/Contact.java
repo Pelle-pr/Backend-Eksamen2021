@@ -20,7 +20,7 @@ public class Contact implements Serializable {
     private String jobtitle;
     private String phone;
 
-    @OneToMany(mappedBy = "contact")
+    @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL)
     private List<Opportunity> opportunityList;
 
 
@@ -34,6 +34,7 @@ public class Contact implements Serializable {
         this.jobtitle = jobtitle;
         this.phone = phone;
     }
+
 
     public void addOpportunity (Opportunity o){
         if(this.opportunityList == null){

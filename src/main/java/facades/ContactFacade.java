@@ -2,6 +2,7 @@ package facades;
 
 import dto.ContactDTO;
 import entities.Contact;
+import entities.Opportunity;
 import errorhandling.MissingInput;
 
 import javax.persistence.EntityManager;
@@ -98,6 +99,8 @@ public class ContactFacade {
         EntityManager em = emf.createEntityManager();
 
         Contact contact = em.find(Contact.class, id);
+
+
 
         try {
             em.getTransaction().begin();
