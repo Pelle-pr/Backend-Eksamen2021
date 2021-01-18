@@ -1,32 +1,27 @@
 package facades;
 
 import dto.ContactDTO;
-import dto.UserDTO;
 import entities.Contact;
-import entities.Role;
-import entities.User;
 import errorhandling.MissingInput;
-import security.errorhandling.AuthenticationException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrmFacade {
+public class ContactFacade {
 
     private static EntityManagerFactory emf;
-    private static CrmFacade instance;
+    private static ContactFacade instance;
 
-    private CrmFacade() {
+    private ContactFacade() {
     }
 
-    public static CrmFacade getCrmFacade(EntityManagerFactory _emf) {
+    public static ContactFacade getCrmFacade(EntityManagerFactory _emf) {
         if (instance == null) {
             emf = _emf;
-            instance = new CrmFacade();
+            instance = new ContactFacade();
         }
         return instance;
     }
@@ -65,10 +60,44 @@ public class CrmFacade {
         return  contactDTOList;
     }
 
+
+    public ContactDTO getContactById (int id ) {
+
+        EntityManager em = emf.createEntityManager();
+
+        Contact contact = em.find(Contact.class, id);
+
+        return new ContactDTO(contact);
+    }
+
+    public ContactDTO editContact (ContactDTO c) throws MissingInput {
+        EntityManager em = emf.createEntityManager();
+        isInputValid(c);
+        Contact contact = em.find(Contact.class, c.getId());
+
+        contact.setName(c.getName());
+        contact.setEmail(c.getEmail());
+        contact.setCompany(c.getCompany());
+        contact.setJobtitle(c.getJobtitle());
+        contact.setPhone(c.getPhone());
+
+        try{
+            em.getTransaction().begin();
+            em.persist(contact);
+            em.getTransaction().commit();
+            return new ContactDTO(contact);
+        }
+        finally {
+            em.close();
+        }
+
+    }
+
     private Contact prepareContact(ContactDTO contactDTO) {
         Contact newContact = new Contact(contactDTO.getName(), contactDTO.getEmail(), contactDTO.getCompany(), contactDTO.getJobtitle(), contactDTO.getPhone());
         return newContact;
     }
+
 
 
     private void isInputValid(ContactDTO contactDTO) throws MissingInput {

@@ -3,13 +3,9 @@ package facades;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.ContactDTO;
-import dto.UserDTO;
 import entities.Contact;
-import entities.Role;
-import entities.User;
 import errorhandling.MissingInput;
 import org.junit.jupiter.api.*;
-import security.errorhandling.AuthenticationException;
 import utils.EMF_Creator;
 
 import javax.persistence.EntityManager;
@@ -21,20 +17,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
-public class CrmFacadeTest {
+public class ContactFacadeTest {
 
     private static EntityManagerFactory emf;
-    private static CrmFacade facade;
+    private static ContactFacade facade;
     private static Contact c1, c2, c3;
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public CrmFacadeTest() {
+    public ContactFacadeTest() {
     }
 
     @BeforeAll
     public static void setUpClass() {
         emf = EMF_Creator.createEntityManagerFactoryForTest();
-        facade = CrmFacade.getCrmFacade(emf);
+        facade = ContactFacade.getCrmFacade(emf);
     }
 
     @AfterAll
@@ -101,6 +97,24 @@ public class CrmFacadeTest {
         List<ContactDTO> contactDTOList = facade.getAllContacts();
 
         assertTrue(contactDTOList.size() == 2);
+    }
+
+    @Test
+    public void getContactByIdTest (){
+
+
+        ContactDTO contactDTO = facade.getContactById(c1.getId());
+        assertTrue(contactDTO.getName().equals(c1.getName()));
+    }
+
+    @Test
+    public void editContactTest () throws MissingInput {
+
+        c1.setName("John");
+
+        ContactDTO contactDTO = facade.editContact(new ContactDTO(c1));
+
+        assertTrue(contactDTO.getName().equals("John"));
     }
 
 

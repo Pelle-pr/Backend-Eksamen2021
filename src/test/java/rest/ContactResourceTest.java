@@ -3,10 +3,7 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.ContactDTO;
-import dto.UserDTO;
 import entities.Contact;
-import entities.Role;
-import entities.User;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -30,7 +27,7 @@ import static org.hamcrest.Matchers.hasItem;
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
 
-public class CrmResourceTest {
+public class ContactResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
@@ -122,7 +119,7 @@ public class CrmResourceTest {
                 .contentType("application/json")
                 .body(contactDTO)
                 .when()
-                .post("/crm/")
+                .post("/contact/")
                 .then()
                 .assertThat()
                 .statusCode(200)
@@ -141,7 +138,7 @@ public class CrmResourceTest {
                 .contentType("application/json")
                 .body(contactDTO)
                 .when()
-                .post("/crm/")
+                .post("/contact/")
                 .then()
                 .assertThat()
                 .statusCode(404)
@@ -155,12 +152,42 @@ public class CrmResourceTest {
 
         given()
                 .contentType("application/json")
-                .get("/crm").then()
+                .get("/contact").then()
                 .assertThat()
                 .statusCode(HttpStatus.OK_200.getStatusCode())
                 .body("name", hasItem("Pelle"))
                 .and()
                 .body("name", hasItem("Mari"));
+    }
+
+    @Test
+    public void testGetContactById (){
+
+        int id = c1.getId();
+
+        given()
+        .contentType("application/json")
+                .get("/contact/{id}", id).then()
+                .assertThat()
+                .statusCode(HttpStatus.OK_200.getStatusCode())
+                .body("name", equalTo("Pelle"));
+
+    }
+
+    @Test
+    public void testEditContact (){
+
+        c1.setName("John");
+
+        given()
+                .contentType("application/json")
+                .body(c1)
+                .put("/contact/")
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .body("name", equalTo("John"));
     }
 
 }

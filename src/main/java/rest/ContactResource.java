@@ -3,31 +3,21 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.ContactDTO;
-import dto.StudentDTO;
 import errorhandling.MissingInput;
-import facades.CrmFacade;
-import facades.UserFacade;
-import fetchers.ExampleFetcher;
-import fetchers.StudentFetcher;
+import facades.ContactFacade;
 import utils.EMF_Creator;
 
-import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeoutException;
 
-@Path("crm")
-public class CrmResource {
+@Path("contact")
+public class ContactResource {
 
     private static final EntityManagerFactory EMF = EMF_Creator.createEntityManagerFactory();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    public static final CrmFacade CRM_FACADE = CrmFacade.getCrmFacade(EMF);
+    public static final ContactFacade CRM_FACADE = ContactFacade.getCrmFacade(EMF);
 
 
     @POST
@@ -51,5 +41,29 @@ public class CrmResource {
 
         return GSON.toJson(contactDTOList);
     }
+
+    @Path("{id}")
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public String getContactByID (@PathParam("id") int id) {
+
+        ContactDTO contactDTO = CRM_FACADE.getContactById(id);
+
+        return GSON.toJson(contactDTO);
+
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public String EditContact (String contact) throws MissingInput {
+        ContactDTO contactDTO = GSON.fromJson(contact,ContactDTO.class);
+
+        ContactDTO editedContact = CRM_FACADE.editContact(contactDTO);
+
+        return GSON.toJson(editedContact);
+
+    }
+
 
 }
