@@ -36,6 +36,32 @@ public class Task implements Serializable {
         this.dueDate = dueDate;
     }
 
+    public Opportunity getOpportunity() {
+        return opportunity;
+    }
+
+
+
+    public void setOpportunity(Opportunity opportunity) {
+        this.opportunity = opportunity;
+    }
+
+    public TaskStatus getTaskStatus() {
+        return taskStatus;
+    }
+
+    public void setTaskStatus(TaskStatus taskStatus) {
+        this.taskStatus = taskStatus;
+    }
+
+    public TaskType getTaskType() {
+        return taskType;
+    }
+
+    public void setTaskType(TaskType taskType) {
+        this.taskType = taskType;
+    }
+
     public int getId() {
         return id;
     }

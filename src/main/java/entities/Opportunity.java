@@ -1,6 +1,7 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 
@@ -33,6 +34,14 @@ public class Opportunity implements Serializable {
         this.name = name;
         this.amount = amount;
         this.CloseDate = closeDate;
+    }
+
+    public void addTask (Task task){
+        if(this.taskList == null){
+            this.taskList = new ArrayList<>();
+        }
+        this.taskList.add(task);
+        task.setOpportunity(this);
     }
 
     public OpportunityStatus getOpportunityStatus() {
@@ -82,4 +91,5 @@ public class Opportunity implements Serializable {
     public void setCloseDate(String closeDate) {
         CloseDate = closeDate;
     }
+
 }

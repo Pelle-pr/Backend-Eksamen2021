@@ -37,6 +37,7 @@ public class ApplicationConfig extends Application {
         resources.add(security.errorhandling.NotAuthorizedExceptionMapper.class);
         resources.add(ContactResource.class);
         resources.add(OpportunityResource.class);
+        resources.add(TaskResource.class);
     }
 
 }
