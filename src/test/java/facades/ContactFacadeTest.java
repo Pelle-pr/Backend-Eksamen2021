@@ -117,6 +117,17 @@ public class ContactFacadeTest {
         assertTrue(contactDTO.getName().equals("John"));
     }
 
+    @Test
+    public void deleteContactTest () {
+
+        ContactDTO contactDTO = facade.deleteContact(c1.getId());
+        List<ContactDTO> dtoList = facade.getAllContacts();
+
+        assertTrue(contactDTO.getName().equals("Pelle"));
+        assertTrue(dtoList.size() == 1);
+
+    }
+
 
 
 }

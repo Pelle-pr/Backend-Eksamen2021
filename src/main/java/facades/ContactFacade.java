@@ -93,6 +93,24 @@ public class ContactFacade {
 
     }
 
+    public ContactDTO deleteContact (int id) {
+
+        EntityManager em = emf.createEntityManager();
+
+        Contact contact = em.find(Contact.class, id);
+
+        try {
+            em.getTransaction().begin();
+            em.remove(contact);
+            em.getTransaction().commit();
+            return new ContactDTO(contact);
+        }finally {
+            em.close();
+        }
+
+    }
+
+
     private Contact prepareContact(ContactDTO contactDTO) {
         Contact newContact = new Contact(contactDTO.getName(), contactDTO.getEmail(), contactDTO.getCompany(), contactDTO.getJobtitle(), contactDTO.getPhone());
         return newContact;

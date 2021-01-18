@@ -190,4 +190,19 @@ public class ContactResourceTest {
                 .body("name", equalTo("John"));
     }
 
+    @Test
+    public void testDeleteContact (){
+
+        given()
+                .contentType("application/json")
+                .delete("/contact/{id}", c1.getId())
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .and()
+                .body("name", equalTo(c1.getName()));
+
+
+    }
+
 }
