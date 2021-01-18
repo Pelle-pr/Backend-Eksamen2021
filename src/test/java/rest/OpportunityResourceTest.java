@@ -3,7 +3,10 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.ContactDTO;
+import dto.OpportunityDTO;
 import entities.Contact;
+import entities.Opportunity;
+import entities.OpportunityStatus;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -27,11 +30,12 @@ import static org.hamcrest.Matchers.hasItem;
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
 
-public class ContactResourceTest {
+public class OpportunityResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
     private static Contact c1, c2, c3;
+    private static OpportunityStatus s1, s2, s3,s4;
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 
@@ -75,13 +79,23 @@ public class ContactResourceTest {
         c2 = new Contact("Mari", "Mari@mail.dk", "SuperBrugsen", "Sales Manager", "87654321");
         c3 = new Contact("Benjamin", "Benjamin@mail.dk", "Expert", "Manager", "22222222");
 
+        s1 = new OpportunityStatus("Active");
+        s2 = new OpportunityStatus("Inactive");
+        s3 = new OpportunityStatus("Won");
+        s4 = new OpportunityStatus("Lost");
         try {
             em.getTransaction().begin();
-            em.createNamedQuery("Contact.deleteAllRows").executeUpdate();
             em.createNamedQuery("Opportunity.deleteAllRows").executeUpdate();
             em.createNamedQuery("OpportunityStatus.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Contact.deleteAllRows").executeUpdate();
+
+
             em.persist(c1);
             em.persist(c2);
+            em.persist(s1);
+            em.persist(s2);
+            em.persist(s3);
+            em.persist(s4);
             em.getTransaction().commit();
         } finally {
             em.close();
@@ -110,100 +124,23 @@ public class ContactResourceTest {
 
 
 
-
     @Test
-    public void testAddContact(){
-        Contact contact = new Contact("TestName", "Test@mail.dk", "TestCompany", "TestJobTitle", "88888888" );
-        ContactDTO contactDTO = new ContactDTO(contact);
+    public void testAddOpp (){
 
+
+        Opportunity opportunity = new Opportunity("Test", 100, "2021-03-03");
+        OpportunityDTO opportunityDTO = new OpportunityDTO(opportunity);
 
         given()
                 .contentType("application/json")
-                .body(contactDTO)
+                .body(opportunityDTO)
                 .when()
-                .post("/contact/")
+                .post("/opportunity/{id}", c2.getId())
                 .then()
                 .assertThat()
                 .statusCode(200)
                 .and()
-                .body("name", equalTo("TestName"));
-    }
-
-    @Test
-    public void testMissingInput(){
-
-        Contact contact = new Contact("", "Test@mail.dk", "TestCompany", "TestJobTitle", "88888888" );
-        ContactDTO contactDTO = new ContactDTO(contact);
-
-
-        given()
-                .contentType("application/json")
-                .body(contactDTO)
-                .when()
-                .post("/contact/")
-                .then()
-                .assertThat()
-                .statusCode(404)
-                .and()
-                .body("message", equalTo("Please enter at least 2 characters in name"));
-
-    }
-
-    @Test
-    public void testGetAllContacts(){
-
-        given()
-                .contentType("application/json")
-                .get("/contact").then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("name", hasItem("Pelle"))
-                .and()
-                .body("name", hasItem("Mari"));
-    }
-
-    @Test
-    public void testGetContactById (){
-
-        int id = c1.getId();
-
-        given()
-        .contentType("application/json")
-                .get("/contact/{id}", id).then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("name", equalTo("Pelle"));
-
-    }
-
-    @Test
-    public void testEditContact (){
-
-        c1.setName("John");
-
-        given()
-                .contentType("application/json")
-                .body(c1)
-                .put("/contact/")
-                .then()
-                .assertThat()
-                .statusCode(200)
-                .and()
-                .body("name", equalTo("John"));
-    }
-
-    @Test
-    public void testDeleteContact (){
-
-        given()
-                .contentType("application/json")
-                .delete("/contact/{id}", c1.getId())
-                .then()
-                .assertThat()
-                .statusCode(200)
-                .and()
-                .body("name", equalTo(c1.getName()));
-
+                .body("name", equalTo("Test"));
 
     }
 

@@ -3,7 +3,10 @@ package facades;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.ContactDTO;
+import dto.OpportunityDTO;
 import entities.Contact;
+import entities.Opportunity;
+import entities.OpportunityStatus;
 import errorhandling.MissingInput;
 import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
@@ -17,20 +20,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
-public class ContactFacadeTest {
+public class OpportunityFacadeTest {
 
     private static EntityManagerFactory emf;
-    private static ContactFacade facade;
+    private static OpportunityFacade facade;
     private static Contact c1, c2, c3;
+    private static Opportunity o1, o2, o3;
+    private static OpportunityStatus s1, s2, s3,s4;
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    public ContactFacadeTest() {
+    public OpportunityFacadeTest() {
     }
 
     @BeforeAll
     public static void setUpClass() {
         emf = EMF_Creator.createEntityManagerFactoryForTest();
-        facade = ContactFacade.getCrmFacade(emf);
+        facade = OpportunityFacade.getOpportunityFacade(emf);
     }
 
     @AfterAll
@@ -47,13 +52,28 @@ public class ContactFacadeTest {
         c2 = new Contact("Mari", "Mari@mail.dk", "SuperBrugsen", "Sales Manager", "87654321");
         c3 = new Contact("Benjamin", "Benjamin@mail.dk", "Expert", "Manager", "22222222");
 
+        o1 = new Opportunity("Sælg dem sko", 5000, "2021-03-04");
+        o2 = new Opportunity("Sælg dem Legetøj", 10000, "2021-03-22");
+
+
+        s1 = new OpportunityStatus("Active");
+        s2 = new OpportunityStatus("Inactive");
+        s3 = new OpportunityStatus("Won");
+        s4 = new OpportunityStatus("Lost");
+
         try {
             em.getTransaction().begin();
-            em.createNamedQuery("Contact.deleteAllRows").executeUpdate();
             em.createNamedQuery("Opportunity.deleteAllRows").executeUpdate();
             em.createNamedQuery("OpportunityStatus.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Contact.deleteAllRows").executeUpdate();
             em.persist(c1);
             em.persist(c2);
+            em.persist(s1);
+            em.persist(s2);
+            em.persist(s3);
+            em.persist(s4);
+            em.persist(o1);
+            em.persist(o2);
             em.getTransaction().commit();
 
         } finally {
@@ -68,66 +88,13 @@ public class ContactFacadeTest {
 
 
     @Test
-    public void addContactTest() throws MissingInput {
+    public void testAddOpp() {
+        o3 = new Opportunity("Test", 5000, "2021-03-04");
+        OpportunityDTO opportunityDTOtoAdd = new OpportunityDTO(o3);
 
-        ContactDTO contactDTO = new ContactDTO(c3);
+        OpportunityDTO opportunityDTO = facade.addOpportunity(c1.getId(), opportunityDTOtoAdd);
 
-        ContactDTO addedContact = facade.addContact(contactDTO);
-
-        List<ContactDTO> contactDTOList = facade.getAllContacts();
-        assertTrue(contactDTOList.size() == 3);
-
-    }
-
-    @Test
-    public void missingInputTest (){
-
-        Contact contact = new Contact("Test", "TestMail.dk", "TestCompany", "TestJobTitle", "66666666");
-        ContactDTO newContactDTO = new ContactDTO(contact);
-
-        MissingInput thrown =
-                assertThrows(MissingInput.class, () -> {
-                    facade.addContact(newContactDTO);
-                });
-        assertTrue(thrown.getMessage().equals("Please enter a valid Email Address"));
-
-    }
-
-    @Test
-    public void getAllContactsTest (){
-
-        List<ContactDTO> contactDTOList = facade.getAllContacts();
-
-        assertTrue(contactDTOList.size() == 2);
-    }
-
-    @Test
-    public void getContactByIdTest (){
-
-
-        ContactDTO contactDTO = facade.getContactById(c1.getId());
-        assertTrue(contactDTO.getName().equals(c1.getName()));
-    }
-
-    @Test
-    public void editContactTest () throws MissingInput {
-
-        c1.setName("John");
-
-        ContactDTO contactDTO = facade.editContact(new ContactDTO(c1));
-
-        assertTrue(contactDTO.getName().equals("John"));
-    }
-
-    @Test
-    public void deleteContactTest () {
-
-        ContactDTO contactDTO = facade.deleteContact(c1.getId());
-        List<ContactDTO> dtoList = facade.getAllContacts();
-
-        assertTrue(contactDTO.getName().equals("Pelle"));
-        assertTrue(dtoList.size() == 1);
-
+        assertTrue(opportunityDTO.getName().equals("Test"));
     }
 
 

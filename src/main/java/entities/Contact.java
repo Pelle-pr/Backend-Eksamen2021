@@ -1,6 +1,8 @@
 package entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.*;
 
 @Entity
@@ -18,6 +20,10 @@ public class Contact implements Serializable {
     private String jobtitle;
     private String phone;
 
+    @OneToMany(mappedBy = "contact")
+    private List<Opportunity> opportunityList;
+
+
     public Contact() {
     }
 
@@ -27,6 +33,14 @@ public class Contact implements Serializable {
         this.company = company;
         this.jobtitle = jobtitle;
         this.phone = phone;
+    }
+
+    public void addOpportunity (Opportunity o){
+        if(this.opportunityList == null){
+            this.opportunityList = new ArrayList<>();
+        }
+        this.opportunityList.add(o);
+        o.setContact(this);
     }
 
     public int getId() {
