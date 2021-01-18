@@ -113,6 +113,7 @@ public class TaskResourceTest {
             em.createNamedQuery("Contact.deleteAllRows").executeUpdate();
             em.createNamedQuery("User.deleteAllRows").executeUpdate();
             em.createNamedQuery("Roles.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Task.deleteAllRows").executeUpdate();
             em.persist(userRole);
             em.persist(user);
             em.persist(c1);
