@@ -7,6 +7,7 @@ import errorhandling.MissingInput;
 import facades.ContactFacade;
 import utils.EMF_Creator;
 
+import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -23,7 +24,7 @@ public class ContactResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    //@RolesAllowed({"user", "admin"})
+    @RolesAllowed({"user", "admin"})
     public String addContact (String contact) throws MissingInput {
 
         ContactDTO newContactDTO = GSON.fromJson(contact, ContactDTO.class);
@@ -35,6 +36,7 @@ public class ContactResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "admin"})
     public String getAllContacts (){
 
         List<ContactDTO> contactDTOList = CONTACT_FACADE.getAllContacts();
@@ -45,6 +47,7 @@ public class ContactResource {
     @Path("{id}")
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "admin"})
     public String getContactByID (@PathParam("id") int id) {
 
         ContactDTO contactDTO = CONTACT_FACADE.getContactById(id);
@@ -56,6 +59,7 @@ public class ContactResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "admin"})
     public String editContact (String contact) throws MissingInput {
         ContactDTO contactDTO = GSON.fromJson(contact,ContactDTO.class);
 
@@ -68,6 +72,7 @@ public class ContactResource {
     @Path("{id}")
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "admin"})
     public String deleteContact (@PathParam("id") int id){
 
         ContactDTO contactDTO = CONTACT_FACADE.deleteContact(id);

@@ -20,6 +20,22 @@ public class TaskStatus implements Serializable {
     public TaskStatus() {
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public List<Task> getTask() {
+        return task;
+    }
+
+    public void setTask(List<Task> task) {
+        this.task = task;
+    }
+
     public TaskStatus(String name) {
         this.name = name;
     }

@@ -3,6 +3,7 @@ package rest;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.ContactDTO;
+import dto.TaskStatusDTO;
 import entities.*;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
@@ -10,16 +11,14 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -27,16 +26,15 @@ import static org.hamcrest.Matchers.hasItem;
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
 
-public class ContactResourceTest {
+public class TaskResourceTest {
 
     private static final int SERVER_PORT = 7777;
     private static final String SERVER_URL = "http://localhost/api";
     private static Contact c1, c2, c3;
     private static Opportunity o1, o2, o3;
     private static OpportunityStatus s1, s2, s3,s4;
-    private static User user;
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
+    private static User user;
 
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
@@ -77,7 +75,6 @@ public class ContactResourceTest {
         user = new User("user", "test123");
         Role userRole = new Role("user");
         user.addRole(userRole);
-
         c1 = new Contact("Pelle", "Pelle@mail.dk", "BornIT", "Manager", "12345678");
         c2 = new Contact("Mari", "Mari@mail.dk", "SuperBrugsen", "Sales Manager", "87654321");
         c3 = new Contact("Benjamin", "Benjamin@mail.dk", "Expert", "Manager", "22222222");
@@ -90,6 +87,16 @@ public class ContactResourceTest {
         s2 = new OpportunityStatus("Inactive");
         s3 = new OpportunityStatus("Won");
         s4 = new OpportunityStatus("Lost");
+
+        TaskStatus ts1 = new TaskStatus("Non-Started");
+        TaskStatus ts2 = new TaskStatus("In Progress");
+        TaskStatus ts3 = new TaskStatus("Complete");
+
+        TaskType tt1 = new TaskType("Online");
+        TaskType tt2 = new TaskType("Meeting");
+        TaskType tt3 = new TaskType("Email");
+        TaskType tt4 = new TaskType("Call");
+
 
         c1.addOpportunity(o1);
         c1.addOpportunity(o2);
@@ -116,6 +123,13 @@ public class ContactResourceTest {
             em.persist(s2);
             em.persist(s3);
             em.persist(s4);
+            em.persist(ts1);
+            em.persist(ts2);
+            em.persist(ts3);
+            em.persist(tt1);
+            em.persist(tt2);
+            em.persist(tt3);
+            em.persist(tt4);
             em.getTransaction().commit();
 
         } finally {
@@ -143,95 +157,25 @@ public class ContactResourceTest {
     }
 
 
-
-
-
+    @Disabled
     @Test
-    public void testAddContact(){
-        Contact contact = new Contact("TestName", "Test@mail.dk", "TestCompany", "TestJobTitle", "88888888" );
-        ContactDTO contactDTO = new ContactDTO(contact);
-        login("user", "test123");
+    public void testGetTaskStatus (){
 
-        given()
+        List<TaskStatusDTO> taskStatusDTOList;
+
+        login("user","test123");
+
+        taskStatusDTOList=  given()
                 .contentType("application/json")
                 .header("x-access-token", securityToken)
-                .body(contactDTO)
-                .when()
-                .post("/contact/")
+                .get("/task/status")
                 .then()
-                .assertThat()
-                .statusCode(200)
-                .and()
-                .body("name", equalTo("TestName"));
-    }
-
-    @Test
-    public void testMissingInput(){
-
-        Contact contact = new Contact("", "Test@mail.dk", "TestCompany", "TestJobTitle", "88888888" );
-        ContactDTO contactDTO = new ContactDTO(contact);
-        login("user", "test123");
-
-        given()
-                .contentType("application/json")
-                .header("x-access-token", securityToken)
-                .body(contactDTO)
-                .when()
-                .post("/contact/")
-                .then()
-                .assertThat()
-                .statusCode(404)
-                .and()
-                .body("message", equalTo("Please enter at least 2 characters in name"));
-
-    }
-
-    @Test
-    public void testGetAllContacts(){
-        login("user", "test123");
-        given()
-                .contentType("application/json")
-                .header("x-access-token", securityToken)
-                .get("/contact").then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("name", hasItem("Pelle"))
-                .and()
-                .body("name", hasItem("Mari"));
-    }
-
-    @Test
-    public void testGetContactById (){
-
-        int id = c1.getId();
-        login("user", "test123");
-        given()
-                .contentType("application/json")
-                .header("x-access-token", securityToken)
-                .get("/contact/{id}", id).then()
-                .assertThat()
-                .statusCode(HttpStatus.OK_200.getStatusCode())
-                .body("name", equalTo("Pelle"));
-
-    }
-
-
-
-    @Test
-    public void testDeleteContact (){
-
-        login("user", "test123");
-        given()
-                .contentType("application/json")
-                .header("x-access-token", securityToken)
-                .delete("/contact/{id}", c1.getId())
-                .then()
-                .assertThat()
-                .statusCode(200)
-                .and()
-                .body("name", equalTo(c1.getName()));
+                .extract().body().jsonPath().getList("", TaskStatusDTO.class);
 
 
     }
+
+
+
 
 }

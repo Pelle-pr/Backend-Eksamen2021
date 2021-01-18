@@ -9,6 +9,7 @@ import facades.ContactFacade;
 import facades.OpportunityFacade;
 import utils.EMF_Creator;
 
+import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -26,7 +27,7 @@ public class OpportunityResource {
     @Path("{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    //@RolesAllowed({"user", "admin"})
+    @RolesAllowed({"user", "admin"})
     public String addContact (@PathParam("id") int id ,String opportunity) throws MissingInput {
 
         OpportunityDTO opportunityDTO = GSON.fromJson(opportunity, OpportunityDTO.class);
@@ -38,6 +39,7 @@ public class OpportunityResource {
 
     @GET
     @Path("{id}")
+    @RolesAllowed({"user", "admin"})
     @Produces(MediaType.APPLICATION_JSON)
 
     public String getOpps(@PathParam("id") int id){

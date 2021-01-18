@@ -4,9 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dto.ContactDTO;
 import dto.OpportunityDTO;
-import entities.Contact;
-import entities.Opportunity;
-import entities.OpportunityStatus;
+import entities.*;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -37,6 +35,7 @@ public class OpportunityResourceTest {
     private static Contact c1, c2, c3;
     private static OpportunityStatus s1, s2, s3,s4;
     private static Opportunity o1, o2, o3;
+    private static User user;
     private static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
 
@@ -76,6 +75,9 @@ public class OpportunityResourceTest {
     @BeforeEach
     public void setUp() {
         EntityManager em = emf.createEntityManager();
+        user = new User("user", "test123");
+        Role userRole = new Role("user");
+        user.addRole(userRole);
         c1 = new Contact("Pelle", "Pelle@mail.dk", "BornIT", "Manager", "12345678");
         c2 = new Contact("Mari", "Mari@mail.dk", "SuperBrugsen", "Sales Manager", "87654321");
         c3 = new Contact("Benjamin", "Benjamin@mail.dk", "Expert", "Manager", "22222222");
@@ -100,6 +102,10 @@ public class OpportunityResourceTest {
             em.createNamedQuery("Opportunity.deleteAllRows").executeUpdate();
             em.createNamedQuery("OpportunityStatus.deleteAllRows").executeUpdate();
             em.createNamedQuery("Contact.deleteAllRows").executeUpdate();
+            em.createNamedQuery("User.deleteAllRows").executeUpdate();
+            em.createNamedQuery("Roles.deleteAllRows").executeUpdate();
+            em.persist(userRole);
+            em.persist(user);
             em.persist(c1);
             em.persist(c2);
             em.persist(o1);
@@ -145,9 +151,11 @@ public class OpportunityResourceTest {
         opportunity.setOpportunityStatus(s1);
         OpportunityDTO opportunityDTO = new OpportunityDTO(opportunity);
 
+        login("user", "test123");
 
         given()
                 .contentType("application/json")
+                .header("x-access-token", securityToken)
                 .body(opportunityDTO)
                 .when()
                 .post("/opportunity/{id}", c2.getId())

@@ -73,33 +73,6 @@ public class OpportunityFacade {
         return opportunityDTOList;
     }
 
-    public TaskDTO addTask (int id, TaskDTO taskDTO) {
 
-        EntityManager em = emf.createEntityManager();
-
-        Opportunity opportunity = em.find(Opportunity.class, id);
-
-        Task task = new Task(taskDTO.getTitle(), taskDTO.getComment(), taskDTO.getDueDate());
-
-        opportunity.addTask(task);
-
-        TypedQuery<TaskStatus> query1 = em.createQuery("select t from TaskStatus t where t.name =:statusName", TaskStatus.class);
-        query1.setParameter("statusName", taskDTO.getTaskStatus());
-        task.setTaskStatus(query1.getSingleResult());
-
-        TypedQuery<TaskType> query2 = em.createQuery("select t from TaskType t where t.name =:taskType", TaskType.class);
-        query2.setParameter("taskType", taskDTO.getTaskType());
-        task.setTaskType(query2.getSingleResult());
-
-        try{
-            em.getTransaction().begin();
-            em.persist(task);
-            em.getTransaction().commit();
-
-            return new TaskDTO(task);
-        }finally {
-            em.close();
-        }
-    }
 
 }
