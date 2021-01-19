@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.*;
 
 @Entity
+@NamedQuery(name = "TaskType.deleteAllRows", query = "DELETE FROM TaskType ")
 public class TaskType implements Serializable {
 
 

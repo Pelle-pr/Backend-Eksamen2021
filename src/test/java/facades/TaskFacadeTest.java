@@ -79,6 +79,8 @@ public class TaskFacadeTest {
             em.createNamedQuery("Opportunity.deleteAllRows").executeUpdate();
             em.createNamedQuery("OpportunityStatus.deleteAllRows").executeUpdate();
             em.createNamedQuery("Contact.deleteAllRows").executeUpdate();
+            em.createNamedQuery("TaskStatus.deleteAllRows").executeUpdate();
+            em.createNamedQuery("TaskType.deleteAllRows").executeUpdate();
             em.createNamedQuery("Task.deleteAllRows").executeUpdate();
             em.persist(c1);
             em.persist(c2);
